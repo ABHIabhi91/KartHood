@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import './LandingPage.css';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import LoginModal from './LoginModal';
+import LoginPage from './LoginPage';
 
 const LandingPage = () => {
   const { user } = useUser();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredShops, setFilteredShops] = useState([]);
-  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
 
   const shops = [
     {
@@ -149,10 +149,10 @@ const LandingPage = () => {
             <span className="welcome-msg">Welcome back, {user.name}! 👋</span>
           ) : (
             <>
-              <button className="login-btn" onClick={() => setShowLoginModal(true)}>
+              <button className="login-btn" onClick={() => navigate('/login')}>
                 Login
               </button>
-              <button className="login-btn" onClick={() => navigate('/register')}>
+              <button className="login-btn" onClick={() => navigate('/login', { state: { mode: 'signup' } })}>
                 Sign Up
               </button>
             </>
@@ -365,8 +365,6 @@ const LandingPage = () => {
           ))}
         </div>
       </div>
-      
-      {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
     </div>
   );
 };
