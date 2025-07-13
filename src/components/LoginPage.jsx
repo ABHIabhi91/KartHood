@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import axios from '../utils/axiosInstance'; // adjust path as needed
+
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,6 +30,7 @@ const inputStyle = {
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -49,11 +52,55 @@ const inputStyle = {
   //   }, 2000);
   // };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setIsLoading(true);
+  
+  //   const url = isSignUp ? 'http://localhost:8080/api/signup' : 'http://localhost:8080/api/login';
+  //   const payload = isSignUp
+  //     ? {
+  //         name: formData.name,
+  //         email: formData.email,
+  //         password: formData.password,
+  //         tower: formData.tower,
+  //         flatNumber: formData.flat,
+  //         phone: formData.phone
+  //       }
+  //     : {
+  //         email: formData.email,
+  //         password: formData.password
+  //       };
+  
+  //   try {
+  //     const res = await fetch(url, {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify(payload)
+  //     });
+  
+  //     if (!res.ok) {
+  //       throw new Error(`Error: ${res.status}`);
+  //     }
+  
+  //     const data = await res.json();
+  //     localStorage.setItem('token', data.token);
+  //     localStorage.setItem('user', JSON.stringify(payload));
+  //     navigate('/');
+  //   } catch (err) {
+  //     alert('❌ Authentication failed. Please check your details and try again.');
+  //     console.error('Auth Error:', err);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setLoginError(''); 
+    const endpoint = isSignUp ? '/signup' : '/login';
   
-    const url = isSignUp ? 'http://localhost:8080/api/signup' : 'http://localhost:8080/api/login';
     const payload = isSignUp
       ? {
           name: formData.name,
@@ -69,29 +116,24 @@ const inputStyle = {
         };
   
     try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      const response = await axios.post(endpoint, payload);
   
-      if (!res.ok) {
-        throw new Error(`Error: ${res.status}`);
-      }
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(response.data.user || payload));
   
-      const data = await res.json();
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(payload));
       navigate('/');
     } catch (err) {
-      alert('❌ Authentication failed. Please check your details and try again.');
-      console.error('Auth Error:', err);
+      if (err.response && err.response.status === 401) {
+        setLoginError('Invalid User'); // Or use error.response.data.message
+      } else {
+        setLoginError('Something went wrong. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
   };
   
-
   const toggleMode = () => {
     setIsSignUp(!isSignUp);
     setFormData({ email: '', password: '' });
@@ -230,6 +272,18 @@ const inputStyle = {
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+
+        {loginError && (
+  <div style={{
+    marginBottom: '20px',
+    color: 'red',
+    fontWeight: '600',
+    fontSize: '16px'
+  }}>
+    {loginError}
+  </div>
+)}
+
 
           {/* Email Input */}
           <div style={{ marginBottom: '25px', position: 'relative' }}>
