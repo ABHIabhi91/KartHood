@@ -37,17 +37,60 @@ const inputStyle = {
     }));
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setIsLoading(true);
+
+  //   // Simulate API call
+  //   setTimeout(() => {
+  //     setIsLoading(false);
+  //     // Navigate to landing page after successful login
+  //     navigate('/');
+  //   }, 2000);
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      // Navigate to landing page after successful login
+  
+    const url = isSignUp ? 'http://localhost:8080/api/signup' : 'http://localhost:8080/api/login';
+    const payload = isSignUp
+      ? {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          tower: formData.tower,
+          flatNumber: formData.flat,
+          phone: formData.phone
+        }
+      : {
+          email: formData.email,
+          password: formData.password
+        };
+  
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+  
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status}`);
+      }
+  
+      const data = await res.json();
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(payload));
       navigate('/');
-    }, 2000);
+    } catch (err) {
+      alert('❌ Authentication failed. Please check your details and try again.');
+      console.error('Auth Error:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
+  
 
   const toggleMode = () => {
     setIsSignUp(!isSignUp);
@@ -186,7 +229,8 @@ const inputStyle = {
         </h2>
 
         {/* Login Form */}
-        <div onSubmit={handleSubmit} style={{ width: '100%' }}>
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+
           {/* Email Input */}
           <div style={{ marginBottom: '25px', position: 'relative' }}>
             <input
@@ -434,7 +478,7 @@ const inputStyle = {
               {isSignUp ? 'Sign In' : 'Sign Up'}
             </button>
           </div>
-        </div>
+        </form>
 
         {/* Social Login Options */}
         <div style={{
