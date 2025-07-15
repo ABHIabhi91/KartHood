@@ -11,7 +11,8 @@ const LoginPage = () => {
   flat: '',
   phone: '',
   email: '',
-  password: ''
+  password: '',
+  role: 'BUYER'
 });
 const inputStyle = {
   width: '100%',
@@ -26,12 +27,18 @@ const inputStyle = {
   marginBottom: '15px'
 };
 
-  const [isSignUp, setIsSignUp] = useState(location.state?.mode === 'signup');
+  // const [isSignUp, setIsSignUp] = useState(location.state?.mode === 'signup');
+
+  const mode = location.state?.mode || 'login';
+  const [isSignUp, setIsSignUp] = useState(mode === 'signup');
+  const isOwnerLogin = mode === 'owner';
+  
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
 
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -40,59 +47,7 @@ const inputStyle = {
     }));
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setIsLoading(true);
 
-  //   // Simulate API call
-  //   setTimeout(() => {
-  //     setIsLoading(false);
-  //     // Navigate to landing page after successful login
-  //     navigate('/');
-  //   }, 2000);
-  // };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setIsLoading(true);
-  
-  //   const url = isSignUp ? 'http://localhost:8080/api/signup' : 'http://localhost:8080/api/login';
-  //   const payload = isSignUp
-  //     ? {
-  //         name: formData.name,
-  //         email: formData.email,
-  //         password: formData.password,
-  //         tower: formData.tower,
-  //         flatNumber: formData.flat,
-  //         phone: formData.phone
-  //       }
-  //     : {
-  //         email: formData.email,
-  //         password: formData.password
-  //       };
-  
-  //   try {
-  //     const res = await fetch(url, {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify(payload)
-  //     });
-  
-  //     if (!res.ok) {
-  //       throw new Error(`Error: ${res.status}`);
-  //     }
-  
-  //     const data = await res.json();
-  //     localStorage.setItem('token', data.token);
-  //     localStorage.setItem('user', JSON.stringify(payload));
-  //     navigate('/');
-  //   } catch (err) {
-  //     alert('❌ Authentication failed. Please check your details and try again.');
-  //     console.error('Auth Error:', err);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
   
 
   const handleSubmit = async (e) => {
@@ -108,7 +63,8 @@ const inputStyle = {
           password: formData.password,
           tower: formData.tower,
           flatNumber: formData.flat,
-          phone: formData.phone
+          phone: formData.phone,
+          role:formData.role
         }
       : {
           email: formData.email,
@@ -116,6 +72,10 @@ const inputStyle = {
         };
   
     try {
+      if(endpoint=='/login')
+      {
+      localStorage.removeItem('token');
+      }
       const response = await axios.post(endpoint, payload);
   
       const token = response.data.token;
@@ -125,7 +85,7 @@ const inputStyle = {
       navigate('/');
     } catch (err) {
       if (err.response && err.response.status === 401) {
-        setLoginError('Invalid User'); // Or use error.response.data.message
+        setLoginError('Username or password is incorrect or only buyer role access to login'); // Or use error.response.data.message
       } else {
         setLoginError('Something went wrong. Please try again.');
       }
@@ -138,6 +98,13 @@ const inputStyle = {
     setIsSignUp(!isSignUp);
     setFormData({ email: '', password: '' });
   };
+  const isLoggedIn = !!localStorage.getItem('token');
+
+const handleLogout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  navigate('/login');
+};
 
   return (
     <div style={{
@@ -151,6 +118,8 @@ const inputStyle = {
       position: 'relative',
       overflow: 'hidden'
     }}>
+     
+
       {/* Background Image with Overlay */}
       <div style={{
         position: 'absolute',
@@ -411,6 +380,19 @@ const inputStyle = {
                 required
                 style={inputStyle}
               />
+              <select
+    name="role"
+    value={formData.role}
+    onChange={handleInputChange}
+    required
+    style={inputStyle}
+  >
+    <option value="BUYER">👤 Buyer</option>
+    <option value="PROPERTY_SELLER">🏠 Property Seller</option>
+    <option value="RESTAURANT_OWNER">🍽️ Restaurant Owner</option>
+    <option value="SALON_OWNER">💇 Salon Owner</option>
+    <option value="BAKERY_OWNER">🧁 Bakery Owner</option>
+  </select>
             </div>
           )}
 

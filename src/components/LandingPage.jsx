@@ -214,6 +214,18 @@ const LandingPage = () => {
             >
               Explore {cat.name}s
             </button>
+            {cat.name === 'Property' && (
+        <button
+          className="explore-btn"
+          onClick={() => navigate('/login', { state: { mode: 'owner' } })}
+          style={{
+            background: 'linear-gradient(45deg, #6a11cb, #2575fc)',
+            marginTop: '10px'
+          }}
+        >
+          Login as Owner
+        </button>
+      )}
           </div>
         ))}
       </div>
