@@ -396,9 +396,7 @@ console.log('lockedRole'+lockedRole);
     onChange={handleInputChange}
     required
     disabled={lockedRole}
-    style={{inputStyle,    backgroundColor: lockedRole ? '#e0e0e0' : 'white', // greyed out
-                           color: lockedRole ? '#888' : '#000',
-                           cursor: lockedRole ? 'not-allowed' : 'pointer'}}
+    style={inputStyle}
   >
     <option value="BUYER">👤 Buyer</option>
     <option value="PROPERTY_SELLER">🏠 Property Seller</option>
