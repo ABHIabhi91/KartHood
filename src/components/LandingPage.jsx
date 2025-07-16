@@ -139,6 +139,22 @@ const LandingPage = () => {
     window.open(`tel:${phone}`, '_self');
   };
 
+const handleLoginAsOwner = () => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    // 👉 Not Logged In: Redirect to login with mode=signup and pre-select PROPERTY_SELLER
+    navigate('/login', { state: { mode: 'signup', role: 'PROPERTY_SELLER' } });
+  } else if (user && user.role !== 'PROPERTY_SELLER') {
+    // 👉 Logged in but not seller
+    alert('⚠️ You are currently logged in as a Buyer.\nPlease logout and login as a Property Seller.');
+  } else if (user && user.role === 'PROPERTY_SELLER') {
+    // 👉 Logged in as seller
+    navigate('/seller-dashboard');
+  }
+};
+
   return (
     <div className="landing-page">
       {/* Enhanced Login Bar */}
@@ -215,9 +231,9 @@ const LandingPage = () => {
               Explore {cat.name}s
             </button>
             {cat.name === 'Property' && (
-        <button
+        <button onClick={handleLoginAsOwner}
           className="explore-btn"
-          onClick={() => navigate('/login', { state: { mode: 'owner' } })}
+          onClick={handleLoginAsOwner}
           style={{
             background: 'linear-gradient(45deg, #6a11cb, #2575fc)',
             marginTop: '10px'

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from '../utils/axiosInstance'; // adjust path as needed
+import { useEffect } from 'react';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -32,7 +33,8 @@ const inputStyle = {
   const mode = location.state?.mode || 'login';
   const [isSignUp, setIsSignUp] = useState(mode === 'signup');
   const isOwnerLogin = mode === 'owner';
-  
+  const lockedRole = location.state?.role === 'PROPERTY_SELLER';
+
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -105,6 +107,14 @@ const handleLogout = () => {
   localStorage.removeItem('user');
   navigate('/login');
 };
+
+
+useEffect(() => {
+console.log('lockedRole'+lockedRole);
+   if (lockedRole) {
+      setFormData((prev) => ({ ...prev, role: 'PROPERTY_SELLER' }));
+    }
+}, [lockedRole]);
 
   return (
     <div style={{
@@ -385,7 +395,10 @@ const handleLogout = () => {
     value={formData.role}
     onChange={handleInputChange}
     required
-    style={inputStyle}
+    disabled={lockedRole}
+    style={{inputStyle,    backgroundColor: lockedRole ? '#e0e0e0' : 'white', // greyed out
+                           color: lockedRole ? '#888' : '#000',
+                           cursor: lockedRole ? 'not-allowed' : 'pointer'}}
   >
     <option value="BUYER">👤 Buyer</option>
     <option value="PROPERTY_SELLER">🏠 Property Seller</option>
