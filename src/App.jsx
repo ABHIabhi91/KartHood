@@ -8,6 +8,8 @@ import BakeryList from './components/BakeryList';
 import BeautyParlourList from './components/BeautyParlourList';
 import LoginPage from './components/LoginPage';
 import PropertyList from './components/Propertypage';
+import SellerDashboard from './pages/SellerDashboard';
+
 function App() {
   return (
     <Routes>
@@ -19,6 +21,8 @@ function App() {
       <Route path="/bakeries" element={<BakeryList />} />
       <Route path="/beauty-parlours" element={<BeautyParlourList />} />
       <Route path="/properties" element={<PropertyList/>}/>
+      <Route path="/seller-dashboard" element={<SellerDashboard/>}/>
+
     </Routes>
   );
 }

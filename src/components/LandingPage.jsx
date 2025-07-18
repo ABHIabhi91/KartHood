@@ -145,7 +145,7 @@ const handleLoginAsOwner = () => {
 
   if (!token) {
     // 👉 Not Logged In: Redirect to login with mode=signup and pre-select PROPERTY_SELLER
-    navigate('/login', { state: { mode: 'signup', role: 'PROPERTY_SELLER' } });
+    navigate('/login', { state: { mode: 'login', role: 'PROPERTY_SELLER' } });
   } else if (user && user.role !== 'PROPERTY_SELLER') {
     // 👉 Logged in but not seller
     alert('⚠️ You are currently logged in as a Buyer.\nPlease logout and login as a Property Seller.');
@@ -187,7 +187,7 @@ const handleLoginAsOwner = () => {
             Explore Now
           </button>
         </div>
-      </div>
+      </div>Fz
 
       {/* Enhanced Search Bar */}
       <div style={{ 
