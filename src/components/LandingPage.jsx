@@ -1,15 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import './LandingPage.css';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../context/UserContext';
-import LoginPage from './LoginPage';
+import { useAuth } from '../context/AuthContext';
 
 const LandingPage = () => {
-  const { user } = useUser();
   const navigate = useNavigate();
+  const { isLoggedIn, currentUser, logout } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredShops, setFilteredShops] = useState([]);
-  const [showLogin, setShowLogin] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+
+    if (token && userData) {
+      try {
+        const user = JSON.parse(userData);
+        if (user.role === 'BUYER') {
+          console.log('User is logged in as buyer:', user.name);
+        }
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    logout();
+    navigate('/login');
+  };
+
+  const handleLoginClick = () => navigate('/login');
+  const handleResidentClick = () => navigate('/register-resident');
+  const handleServiceClick = () => navigate('/register-service');
 
   const shops = [
     {
@@ -75,27 +102,27 @@ const LandingPage = () => {
   ];
 
   const categories = [
-    { 
-      name: 'Restaurant', 
-      count: shops.filter(s => s.category === 'restaurant').length, 
+    {
+      name: 'Restaurant',
+      count: shops.filter(s => s.category === 'restaurant').length,
       img: '/images/restaurant.jpg',
       gradient: 'linear-gradient(45deg, #ff6b6b, #ee5a24)'
     },
-    { 
-      name: 'Salon', 
-      count: shops.filter(s => s.category === 'salon').length, 
+    {
+      name: 'Salon',
+      count: shops.filter(s => s.category === 'salon').length,
       img: '/images/salon.jpg',
       gradient: 'linear-gradient(45deg, #667eea, #764ba2)'
     },
-    { 
-      name: 'Bakery', 
-      count: shops.filter(s => s.category === 'bakery').length, 
+    {
+      name: 'Bakery',
+      count: shops.filter(s => s.category === 'bakery').length,
       img: '/images/bakery.jpg',
       gradient: 'linear-gradient(45deg, #f093fb, #f5576c)'
     },
-    { 
-      name: 'Beauty Parlour', 
-      count: 2, 
+    {
+      name: 'Beauty Parlour',
+      count: 2,
       img: '/images/beauty-parlour.jpg',
       gradient: 'linear-gradient(45deg, #4facfe, #00f2fe)'
     },
@@ -131,91 +158,83 @@ const LandingPage = () => {
     navigate(routes[categoryName] || '/');
   };
 
-  const handleShopClick = (shop) => {
-    navigate(`/shop/${shop.id}`, { state: { shop } });
-  };
+  const handleShopClick = (shop) => navigate(`/shop/${shop.id}`, { state: { shop } });
 
   const handleCallShop = (phone) => {
     window.open(`tel:${phone}`, '_self');
   };
 
-const handleLoginAsOwner = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
-  const token = localStorage.getItem('token');
+  const getCurrentUser = () => {
+    if (currentUser) return currentUser;
 
-  if (!token) {
-    // 👉 Not Logged In: Redirect to login with mode=signup and pre-select PROPERTY_SELLER
-    navigate('/login', { state: { mode: 'login', role: 'PROPERTY_SELLER' } });
-  } else if (user && user.role !== 'PROPERTY_SELLER') {
-    // 👉 Logged in but not seller
-    alert('⚠️ You are currently logged in as a Buyer.\nPlease logout and login as a Property Seller.');
-  } else if (user && user.role === 'PROPERTY_SELLER') {
-    // 👉 Logged in as seller
-    navigate('/seller-dashboard');
-  }
-};
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        return user.role === 'BUYER' ? user : null;
+      } catch (error) {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const isBuyerLoggedIn = () => {
+    const token = localStorage.getItem('token');
+    const user = getCurrentUser();
+    return token && user && user.role === 'BUYER';
+  };
+
+  const displayUser = getCurrentUser();
+  const buyerLoggedIn = isBuyerLoggedIn();
 
   return (
-    <div className="landing-page">
-      {/* Enhanced Login Bar */}
+    <div>
+      {/* Login Bar */}
       <div className="login-bar">
         <h1>🏪 Kart Hood</h1>
         <div>
-          {user ? (
-            <span className="welcome-msg">Welcome back, {user.name}! 👋</span>
+          {buyerLoggedIn && displayUser ? (
+            <div className="login-loggedin">
+              <span className="welcome-msg">Hi {displayUser.name}! 👋</span>
+              <button className="login-btn" onClick={handleLogout}>Logout</button>
+            </div>
           ) : (
-            <>
-              <button className="login-btn" onClick={() => navigate('/login')}>
-                Login
-              </button>
-              <button className="login-btn" onClick={() => navigate('/login', { state: { mode: 'signup' } })}>
-                Sign Up
-              </button>
-            </>
+            <div className="login-buttons">
+              <button className="login-btn" onClick={handleLoginClick}>🔑 Login</button>
+              <button className="login-btn resident-btn" onClick={handleResidentClick}>🏠 Register as Resident</button>
+              <button className="login-btn service-btn" onClick={handleServiceClick}>💼 Join as Service</button>
+            </div>
           )}
         </div>
       </div>
 
-      {/* Enhanced Header with Content */}
+      {/* Header */}
       <div className="header-image">
         <div className="header-content">
           <h1>Discover Local Treasures</h1>
           <p>Find the best shops, restaurants, and services in your neighborhood</p>
           <button className="explore-btn" onClick={() => {
             document.querySelector('.categories').scrollIntoView({ behavior: 'smooth' });
-          }}>
-            Explore Now
-          </button>
+          }}>Explore Now</button>
         </div>
-      </div>Fz
+      </div>
 
-      {/* Enhanced Search Bar */}
-      <div style={{ 
-        padding: '40px 20px', 
-        textAlign: 'center', 
-        background: 'rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(10px)'
-      }}>
+      <div className="search-bar">
+        <i className="search-icon">🔍</i>
         <input
           type="text"
-          placeholder="🔍 Search for shops, restaurants, services..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{
-            width: '100%',
-            maxWidth: '600px',
-            padding: '15px 20px',
-            fontSize: '16px',
-            border: 'none',
-            borderRadius: '25px',
-            outline: 'none',
-            background: 'rgba(255, 255, 255, 0.9)',
-            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
-          }}
+          placeholder="Search for shops, restaurants, services..."
+          className="search-input"
         />
       </div>
 
-      {/* Enhanced Categories Section */}
+
+
+
+      {/* Categories */}
       <h2 className="section-title">🏷️ Shop by Category</h2>
       <div className="categories">
         {categories.map((cat) => (
@@ -223,88 +242,36 @@ const handleLoginAsOwner = () => {
             <img src={cat.img} alt={cat.name} />
             <h4>{cat.name}</h4>
             <p>{cat.count} Shops Available</p>
-            <button
-              className="explore-btn"
-              onClick={() => handleCategoryClick(cat.name)}
-              style={{ background: cat.gradient }}
-            >
-              Explore {cat.name}s
-            </button>
-            {cat.name === 'Property' && (
-        <button onClick={handleLoginAsOwner}
-          className="explore-btn"
-          onClick={handleLoginAsOwner}
-          style={{
-            background: 'linear-gradient(45deg, #6a11cb, #2575fc)',
-            marginTop: '10px'
-          }}
-        >
-          Login as Owner
-        </button>
-      )}
+            <button className="explore-btn" style={{ background: cat.gradient }} onClick={() => handleCategoryClick(cat.name)}>Explore {cat.name}s</button>
           </div>
         ))}
       </div>
 
-      {/* Enhanced Shops Section */}
+      {/* Shops and Featured */}
       <div className="sections-container">
         <div className="shops-box">
-          <h3 className="shops-heading">
-            🏪 {searchTerm ? 'Search Results' : 'Popular Shops in CP1'}
-          </h3>
-          
+          <h3 className="shops-heading">🏪 {searchTerm ? 'Search Results' : 'Popular Shops in CP1'}</h3>
           {filteredShops.length === 0 ? (
-            <div style={{ 
-              textAlign: 'center', 
-              padding: '40px 20px',
-              color: '#7f8c8d'
-            }}>
+            <div className="no-shops-message">
               <p>No shops found matching your search.</p>
             </div>
           ) : (
             filteredShops.map((shop) => (
-              <div 
-                className="shop-card" 
-                key={shop.id}
-                onClick={() => handleShopClick(shop)}
-                style={{ cursor: 'pointer' }}
-              >
+              <div className="shop-card" key={shop.id} onClick={() => handleShopClick(shop)} role="button" tabIndex={0}>
                 <img src={shop.img} alt={shop.name} />
                 <div className="shop-info">
                   <h4>{shop.name}</h4>
                   <div className="stars">{shop.rating}</div>
                   <div className="desc">{shop.desc}</div>
-                  <div style={{ 
-                    fontSize: '12px', 
-                    color: shop.isOpen ? '#27ae60' : '#e74c3c',
-                    fontWeight: 'bold',
-                    marginTop: '5px'
-                  }}>
+                  <div className={`status ${shop.isOpen ? 'open' : 'closed'}`}>
                     {shop.isOpen ? '🟢 Open' : '🔴 Closed'}
                   </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <button 
-                    className="view-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleShopClick(shop);
-                    }}
-                  >
+                <div className="shop-actions">
+                  <button className="view-button" onClick={(e) => { e.stopPropagation(); handleShopClick(shop); }}>
                     View Details
                   </button>
-                  <button 
-                    className="call-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCallShop(shop.phone);
-                    }}
-                    style={{ 
-                      fontSize: '10px', 
-                      padding: '6px 12px',
-                      background: 'linear-gradient(45deg, #27ae60, #2ecc71)'
-                    }}
-                  >
+                  <button className="call-btn" onClick={(e) => { e.stopPropagation(); handleCallShop(shop.phone); }}>
                     📞 Call
                   </button>
                 </div>
@@ -313,43 +280,23 @@ const handleLoginAsOwner = () => {
           )}
         </div>
 
-        {/* Enhanced Featured Shop */}
         <div className="shopkeeper-box">
           <h3>🌟 Featured: Coders! Cafe</h3>
-          <div style={{ 
-            background: 'rgba(255, 255, 255, 0.5)', 
-            padding: '20px', 
-            borderRadius: '15px',
-            marginBottom: '20px'
-          }}>
+          <div className="featured-info">
             <p>🕙 <strong>Hours:</strong> 10:00 AM - 11:00 PM</p>
             <p>🏢 <strong>Location:</strong> Tower A Shop 3</p>
             <p>📞 <strong>Phone:</strong> 1284567860</p>
             <p>⭐ <strong>Rating:</strong> 4.7/5 (320 reviews)</p>
           </div>
-          
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-            <button 
-              className="call-btn"
-              onClick={() => handleCallShop('1284567860')}
-            >
-              📞 Call Now
-            </button>
-            <button 
-              className="view-button"
-              onClick={() => navigate('/shop/coders-cafe')}
-            >
-              View Menu
-            </button>
+
+          <div className="featured-buttons">
+            <button className="call-btn" onClick={() => handleCallShop('1284567860')}>📞 Call Now</button>
+            <button className="view-button" onClick={() => navigate('/shop/coders-cafe')}>View Menu</button>
           </div>
 
           <div className="menu">
             <h4>🍽️ Popular Items</h4>
-            <div style={{ 
-              background: 'rgba(255, 255, 255, 0.3)', 
-              padding: '15px', 
-              borderRadius: '10px' 
-            }}>
+            <div className="menu-items">
               <p>🥖 Bruschetta — ₹150</p>
               <p>☕ Cappuccino — ₹120</p>
               <p>🍰 Chocolate Cake — ₹180</p>
@@ -359,36 +306,20 @@ const handleLoginAsOwner = () => {
         </div>
       </div>
 
-      {/* New Features Section */}
-      <div style={{ 
-        padding: '60px 20px',
-        background: 'rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(10px)'
-      }}>
+      {/* Features Section */}
+      <div className="features-section">
         <h2 className="section-title">🚀 Why Choose Kart Hood?</h2>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '30px',
-          maxWidth: '1000px',
-          margin: '0 auto'
-        }}>
+        <div className="features-grid">
           {[
             { icon: '🔍', title: 'Easy Discovery', desc: 'Find local businesses with smart search' },
             { icon: '⭐', title: 'Verified Reviews', desc: 'Read authentic customer experiences' },
             { icon: '📱', title: 'Quick Contact', desc: 'Call or visit shops directly from the app' },
             { icon: '🕒', title: 'Live Updates', desc: 'Real-time open/closed status' }
           ].map((feature, index) => (
-            <div key={index} style={{
-              background: 'rgba(255, 255, 255, 0.9)',
-              padding: '30px 20px',
-              borderRadius: '15px',
-              textAlign: 'center',
-              boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)'
-            }}>
-              <div style={{ fontSize: '3rem', marginBottom: '15px' }}>{feature.icon}</div>
-              <h4 style={{ color: '#2c3e50', marginBottom: '10px' }}>{feature.title}</h4>
-              <p style={{ color: '#7f8c8d', fontSize: '14px' }}>{feature.desc}</p>
+            <div className="feature-card" key={index}>
+              <div className="feature-icon">{feature.icon}</div>
+              <h4>{feature.title}</h4>
+              <p>{feature.desc}</p>
             </div>
           ))}
         </div>
