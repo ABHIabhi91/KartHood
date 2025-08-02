@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@genkit-ai/googleai": "^1.15.5",
     "axios": "^1.10.0",
     "cra-template-pwa": "2.0.0",
+    "genkit": "^1.15.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.3",

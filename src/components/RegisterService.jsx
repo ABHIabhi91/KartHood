@@ -20,7 +20,7 @@ const RegisterService = () => {
 
   // Business category options
   const categoryOptions = [
-    { value: 'PROPERTY_SELLER', label: '🏠 Property Seller' },
+    { value: 'PROPERTY_SELLER', label: '🏠 Property Services' },
     { value: 'RESTAURANT_OWNER', label: '🍽️ Restaurant Owner' },
     { value: 'SALON_OWNER', label: '💇 Salon Owner' },
     { value: 'BAKERY_OWNER', label: '🧁 Bakery Owner' }

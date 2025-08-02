@@ -6,9 +6,11 @@ import './LoginPage.css';
 const LoginPage = () => {
   const navigate = useNavigate();
 
+  // 1. MODIFIED STATE: Added userType with a default value
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    userType: 'Resident' // Default to 'Resident'
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -28,10 +30,8 @@ const LoginPage = () => {
     setIsLoading(true);
     setLoginError('');
 
-    const payload = {
-      email: formData.email,
-      password: formData.password
-    };
+    // 2. MODIFIED PAYLOAD: The entire formData now matches the required structure
+    const payload = formData;
 
     try {
       localStorage.removeItem('token');
@@ -46,7 +46,7 @@ const LoginPage = () => {
     } catch (err) {
       console.error('Authentication error:', err);
       if (err.response && err.response.status === 401) {
-        setLoginError('Username or password is incorrect');
+        setLoginError('Credentials or User Type is incorrect'); // Updated error message
       } else if (err.response && err.response.data && err.response.data.message) {
         setLoginError(err.response.data.message);
       } else {
@@ -59,13 +59,11 @@ const LoginPage = () => {
 
   return (
     <div className="login-page">
-      {/* Glow background effect */}
+      {/* ... (background and other elements are unchanged) ... */}
       <div className="background-image" />
       <div className="gradient-overlay" />
       <div className="floating-element-1" />
       <div className="floating-element-2" />
-
-      {/* Back Button */}
       <button
         onClick={() => navigate('/')}
         className="back-button"
@@ -73,8 +71,6 @@ const LoginPage = () => {
       >
         ←
       </button>
-
-      {/* Main Container */}
       <div className="login-container">
         <div className="logo" aria-label="Kart Hood logo">
           🏪 Kart Hood
@@ -123,6 +119,35 @@ const LoginPage = () => {
             </button>
           </div>
 
+          {/* 3. ADDED JSX: User Type radio button group */}
+          <div className="user-type-group" role="radiogroup" aria-labelledby="user-type-label">
+            <div className="radio-options">
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="userType"
+                  value="Resident"
+                  checked={formData.userType === 'Resident'}
+                  onChange={handleInputChange}
+                  className="form-radio"
+                />
+                🏠 Resident
+              </label>
+              <label className="radio-label">
+                <input
+                  type="radio"
+                  name="userType"
+                  value="Service Provider"
+                  checked={formData.userType === 'Service Provider'}
+                  onChange={handleInputChange}
+                  className="form-radio"
+                />
+                💼 Service Provider
+              </label>
+            </div>
+          </div>
+
+
           <button
             type="submit"
             disabled={isLoading}
@@ -145,6 +170,7 @@ const LoginPage = () => {
           </div>
         </form>
 
+        {/* ... (auth links are unchanged) ... */}
         <div className="auth-links">
           <p>Don't have an account yet?</p>
           <div className="register-options">

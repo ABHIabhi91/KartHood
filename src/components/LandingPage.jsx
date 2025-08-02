@@ -145,7 +145,7 @@ const LandingPage = () => {
     } else {
       setFilteredShops(shops);
     }
-  }, [searchTerm]);
+  }, [searchTerm, shops]); // Added shops to dependency array for correctness
 
   const handleCategoryClick = (categoryName) => {
     const routes = {
@@ -171,7 +171,8 @@ const LandingPage = () => {
     if (userData) {
       try {
         const user = JSON.parse(userData);
-        return user.role === 'BUYER' ? user : null;
+        // Assuming a logged-in user is a buyer for display purposes
+        return user;
       } catch (error) {
         return null;
       }
@@ -179,14 +180,14 @@ const LandingPage = () => {
     return null;
   };
 
-  const isBuyerLoggedIn = () => {
+  const isUserLoggedIn = () => {
     const token = localStorage.getItem('token');
     const user = getCurrentUser();
-    return token && user && user.role === 'BUYER';
+    return token && user;
   };
 
   const displayUser = getCurrentUser();
-  const buyerLoggedIn = isBuyerLoggedIn();
+  const userIsLoggedIn = isUserLoggedIn();
 
   return (
     <div>
@@ -194,9 +195,9 @@ const LandingPage = () => {
       <div className="login-bar">
         <h1>🏪 Kart Hood</h1>
         <div>
-          {buyerLoggedIn && displayUser ? (
+          {userIsLoggedIn && displayUser ? (
             <div className="login-loggedin">
-              <span className="welcome-msg">Hi {displayUser.name}! 👋</span>
+              <span className="welcome-msg">Hi {displayUser.name || 'User'}! 👋</span>
               <button className="login-btn" onClick={handleLogout}>Logout</button>
             </div>
           ) : (
@@ -212,11 +213,20 @@ const LandingPage = () => {
       {/* Header */}
       <div className="header-image">
         <div className="header-content">
-          <h1>Discover Local Treasures</h1>
-          <p>Find the best shops, restaurants, and services in your neighborhood</p>
-          <button className="explore-btn" onClick={() => {
-            document.querySelector('.categories').scrollIntoView({ behavior: 'smooth' });
-          }}>Explore Now</button>
+          <h1>Your Community. Your Services. One Hub</h1>
+          <p>Find local services, connect with your neighbours</p>
+          {/* MODIFICATION START: Replaced single button with two */}
+          <div className="header-actions">
+            <button className="header-btn primary" onClick={() => {
+              document.querySelector('.categories').scrollIntoView({ behavior: 'smooth' });
+            }}>
+              🔍 Find Services
+            </button>
+            <button className="header-btn secondary" onClick={handleServiceClick}>
+              💼 Grow Your Business
+            </button>
+          </div>
+          {/* MODIFICATION END */}
         </div>
       </div>
 
@@ -230,9 +240,6 @@ const LandingPage = () => {
           className="search-input"
         />
       </div>
-
-
-
 
       {/* Categories */}
       <h2 className="section-title">🏷️ Shop by Category</h2>
