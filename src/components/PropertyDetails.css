@@ -1,0 +1,168 @@
+/* PropertyDetails.css  (extends the earlier version) */
+
+:root {
+  --clr-primary: #0069d9;
+  --clr-primary-dark: #0052aa;
+  --clr-secondary: #6c757d;
+  --clr-secondary-dark: #565e64;
+  --clr-saved: #d63384;
+  --clr-text: #212529;
+  --gap: 1rem;
+  --radius: 0.55rem;
+  --shadow: 0 6px 14px rgb(0 0 0 / 0.08);
+  --max-width: 960px;
+}
+
+/* wrapper */
+.property-details {
+  margin-inline: auto;
+  padding: 2rem 1rem;
+  max-width: var(--max-width);
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: var(--clr-text);
+  line-height: 1.55;
+}
+
+/* back link */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+  background: none;
+  border: none;
+  color: var(--clr-primary);
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+.back-link:hover { text-decoration: underline; }
+
+/* heading */
+.property-details h1 {
+  margin-block: 0 0.4rem;
+  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+  font-weight: 700;
+}
+
+/* meta badges */
+.property-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--gap) * 0.75);
+  margin-bottom: 1.2rem;
+  font-size: 0.95rem;
+}
+.property-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: #f2f2f2;
+}
+.status { font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+.status.available { background: #d1fae5; color: #0f5132; }
+.status.sold      { background: #ffe8e6; color: #842029; }
+
+/* hero image */
+.property-img {
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
+}
+
+/* info grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--gap);
+  margin-block: 1rem 2rem;
+}
+.info-grid div {
+  background: #fafafa;
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  box-shadow: inset 0 0 0 1px #e3e3e3;
+}
+.info-grid strong { display: block; margin-bottom: 0.25rem; font-weight: 600; color: #495057; }
+
+/* section headings */
+.section-title     { font-size: 1.25rem; margin-block: 1.5rem 0.75rem; }
+.section-subtitle  { font-size: 1.1rem;  margin-block: 1.25rem 0.5rem; }
+
+/* full description */
+.property-full-desc { margin-bottom: 1rem; }
+
+/* amenity list */
+.amenity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.6rem 1rem;
+}
+.amenity-list li { background: #f8f9fa; padding: 0.55rem 0.8rem; border-radius: var(--radius); }
+
+/* map widget placeholder */
+.map-widget {
+  height: 220px;
+  border: 2px dashed #ced4da;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  color: #868e96;
+  margin-bottom: 2rem;
+}
+
+/* buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.15rem;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s ease-in-out;
+}
+.btn-primary        { background: var(--clr-primary);   color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--clr-primary-dark); }
+.btn-secondary      { background: var(--clr-secondary); color: #fff; }
+.btn-secondary:hover:not(:disabled) { background: var(--clr-secondary-dark); }
+.btn-saved          { background: var(--clr-saved);     color: #fff; }
+.btn:disabled       { opacity: 0.6; cursor: not-allowed; }
+
+/* button row */
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap);
+  margin-bottom: 2rem;
+}
+
+/* seller card */
+.seller-card {
+  border: 1px solid #e3e3e3;
+  border-radius: var(--radius);
+  padding: 1.25rem 1.25rem 1.5rem;
+  box-shadow: var(--shadow);
+  background: #fff;
+  max-width: 480px;
+}
+.seller-card h3      { margin-top: 0; margin-bottom: 0.75rem; font-size: 1.15rem; }
+.seller-card p       { margin: 0.4rem 0; }
+
+/* responsive tweaks */
+@media (max-width: 600px) {
+  .property-details { padding: 1.25rem 0.75rem; }
+  .info-grid        { gap: calc(var(--gap) * 0.75); }
+  .amenity-list     { grid-template-columns: 1fr; }
+}

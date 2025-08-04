@@ -9,6 +9,7 @@ const LandingPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredShops, setFilteredShops] = useState([]);
 
+  // MODIFICATION START: Updated useEffect to handle redirection
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
@@ -16,16 +17,22 @@ const LandingPage = () => {
     if (token && userData) {
       try {
         const user = JSON.parse(userData);
+        // Check if the user is a 'BUYER' and redirect them to their dashboard
         if (user.role === 'BUYER') {
-          console.log('User is logged in as buyer:', user.name);
+          console.log('User is a buyer, redirecting to dashboard:', user.name);
+          // Redirect to the user dashboard and pass user info in the state
+          navigate('/resident/dashboard', { state: { user } });
         }
       } catch (error) {
         console.error('Error parsing user data:', error);
+        // Clean up corrupted data from localStorage
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       }
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // The navigate function is stable and usually doesn't need to be in the dependency array
+  // MODIFICATION END
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -145,15 +152,15 @@ const LandingPage = () => {
     } else {
       setFilteredShops(shops);
     }
-  }, [searchTerm, shops]); // Added shops to dependency array for correctness
+  }, [searchTerm]); // Removed 'shops' from dependency array as it's a constant within the component
 
   const handleCategoryClick = (categoryName) => {
     const routes = {
-      'Restaurant': '/restaurants',
-      'Salon': '/salons',
-      'Bakery': '/bakeries',
-      'Beauty Parlour': '/beauty-parlours',
-      'Property': '/properties'
+      'Restaurant': '/services/restaurants',
+      'Salon': '/services/salons',
+      'Bakery': '/services/bakeries',
+      'Beauty Parlour': '/services/beauty-parlours',
+      'Property': '/services/properties'
     };
     navigate(routes[categoryName] || '/');
   };
@@ -171,7 +178,6 @@ const LandingPage = () => {
     if (userData) {
       try {
         const user = JSON.parse(userData);
-        // Assuming a logged-in user is a buyer for display purposes
         return user;
       } catch (error) {
         return null;
@@ -215,7 +221,6 @@ const LandingPage = () => {
         <div className="header-content">
           <h1>Your Community. Your Services. One Hub</h1>
           <p>Find local services, connect with your neighbours</p>
-          {/* MODIFICATION START: Replaced single button with two */}
           <div className="header-actions">
             <button className="header-btn primary" onClick={() => {
               document.querySelector('.categories').scrollIntoView({ behavior: 'smooth' });
@@ -226,7 +231,6 @@ const LandingPage = () => {
               💼 Grow Your Business
             </button>
           </div>
-          {/* MODIFICATION END */}
         </div>
       </div>
 
@@ -298,7 +302,7 @@ const LandingPage = () => {
 
           <div className="featured-buttons">
             <button className="call-btn" onClick={() => handleCallShop('1284567860')}>📞 Call Now</button>
-            <button className="view-button" onClick={() => navigate('/shop/coders-cafe')}>View Menu</button>
+            <button className="view-button" onClick={() => navigate('/shop/featured-cafe')}>View Menu</button>
           </div>
 
           <div className="menu">
