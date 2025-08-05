@@ -49,7 +49,7 @@ const RegisterService = () => {
     };
 
     try {
-      const response = await axios.post('/signup-service', payload);
+      const response = await axios.post('/signup', payload);
       const token = response.data.token;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(response.data.user || payload));
@@ -180,3 +180,4 @@ const RegisterService = () => {
 };
 
 export default RegisterService;
+
