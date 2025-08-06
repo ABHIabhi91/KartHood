@@ -1,49 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './LandingPage.css';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useUser } from '../context/UserContext';
+import LoginPage from './LoginPage';
 
 const LandingPage = () => {
+  const { user } = useUser();
   const navigate = useNavigate();
-  const { isLoggedIn, currentUser, logout } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredShops, setFilteredShops] = useState([]);
-
-  // MODIFICATION START: Updated useEffect to handle redirection
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-
-    if (token && userData) {
-      try {
-        const user = JSON.parse(userData);
-        // Check if the user is a 'BUYER' and redirect them to their dashboard
-        if (user.role === 'BUYER') {
-          console.log('User is a buyer, redirecting to dashboard:', user.name);
-          // Redirect to the user dashboard and pass user info in the state
-          navigate('/resident/dashboard', { state: { user } });
-        }
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        // Clean up corrupted data from localStorage
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // The navigate function is stable and usually doesn't need to be in the dependency array
-  // MODIFICATION END
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    logout();
-    navigate('/login');
-  };
-
-  const handleLoginClick = () => navigate('/login');
-  const handleResidentClick = () => navigate('/register-resident');
-  const handleServiceClick = () => navigate('/register-service');
+  const [showLogin, setShowLogin] = useState(false);
 
   const shops = [
     {
@@ -109,27 +75,27 @@ const LandingPage = () => {
   ];
 
   const categories = [
-    {
-      name: 'Restaurant',
-      count: shops.filter(s => s.category === 'restaurant').length,
+    { 
+      name: 'Restaurant', 
+      count: shops.filter(s => s.category === 'restaurant').length, 
       img: '/images/restaurant.jpg',
       gradient: 'linear-gradient(45deg, #ff6b6b, #ee5a24)'
     },
-    {
-      name: 'Salon',
-      count: shops.filter(s => s.category === 'salon').length,
+    { 
+      name: 'Salon', 
+      count: shops.filter(s => s.category === 'salon').length, 
       img: '/images/salon.jpg',
       gradient: 'linear-gradient(45deg, #667eea, #764ba2)'
     },
-    {
-      name: 'Bakery',
-      count: shops.filter(s => s.category === 'bakery').length,
+    { 
+      name: 'Bakery', 
+      count: shops.filter(s => s.category === 'bakery').length, 
       img: '/images/bakery.jpg',
       gradient: 'linear-gradient(45deg, #f093fb, #f5576c)'
     },
-    {
-      name: 'Beauty Parlour',
-      count: 2,
+    { 
+      name: 'Beauty Parlour', 
+      count: 2, 
       img: '/images/beauty-parlour.jpg',
       gradient: 'linear-gradient(45deg, #4facfe, #00f2fe)'
     },
@@ -152,98 +118,88 @@ const LandingPage = () => {
     } else {
       setFilteredShops(shops);
     }
-  }, [searchTerm]); // Removed 'shops' from dependency array as it's a constant within the component
+  }, [searchTerm]);
 
   const handleCategoryClick = (categoryName) => {
     const routes = {
-      'Restaurant': '/services/restaurants',
-      'Salon': '/services/salons',
-      'Bakery': '/services/bakeries',
-      'Beauty Parlour': '/services/beauty-parlours',
-      'Property': '/services/properties'
+      'Restaurant': '/restaurants',
+      'Salon': '/salons',
+      'Bakery': '/bakeries',
+      'Beauty Parlour': '/beauty-parlours',
+      'Property': '/properties'
     };
     navigate(routes[categoryName] || '/');
   };
 
-  const handleShopClick = (shop) => navigate(`/shop/${shop.id}`, { state: { shop } });
+  const handleShopClick = (shop) => {
+    navigate(`/shop/${shop.id}`, { state: { shop } });
+  };
 
   const handleCallShop = (phone) => {
     window.open(`tel:${phone}`, '_self');
   };
 
-  const getCurrentUser = () => {
-    if (currentUser) return currentUser;
-
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      try {
-        const user = JSON.parse(userData);
-        return user;
-      } catch (error) {
-        return null;
-      }
-    }
-    return null;
-  };
-
-  const isUserLoggedIn = () => {
-    const token = localStorage.getItem('token');
-    const user = getCurrentUser();
-    return token && user;
-  };
-
-  const displayUser = getCurrentUser();
-  const userIsLoggedIn = isUserLoggedIn();
-
   return (
-    <div>
-      {/* Login Bar */}
+    <div className="landing-page">
+      {/* Enhanced Login Bar */}
       <div className="login-bar">
         <h1>🏪 Kart Hood</h1>
         <div>
-          {userIsLoggedIn && displayUser ? (
-            <div className="login-loggedin">
-              <span className="welcome-msg">Hi {displayUser.name || 'User'}! 👋</span>
-              <button className="login-btn" onClick={handleLogout}>Logout</button>
-            </div>
+          {user ? (
+            <span className="welcome-msg">Welcome back, {user.name}! 👋</span>
           ) : (
-            <div className="login-buttons">
-              <button className="login-btn" onClick={handleLoginClick}>🔑 Login</button>
-              <button className="login-btn resident-btn" onClick={handleResidentClick}>🏠 Register as Resident</button>
-              <button className="login-btn service-btn" onClick={handleServiceClick}>💼 Join as Service</button>
-            </div>
+            <>
+              <button className="login-btn" onClick={() => navigate('/login')}>
+                Login
+              </button>
+              <button className="login-btn" onClick={() => navigate('/login', { state: { mode: 'signup' } })}>
+                Sign Up
+              </button>
+            </>
           )}
         </div>
       </div>
 
-      {/* Header */}
+      {/* Enhanced Header with Content */}
       <div className="header-image">
         <div className="header-content">
-          <h1>Your Community. Your Services. One Hub</h1>
-          <p>Find local services, connect with your neighbours</p>
-          <div className="header-actions">
-            <button className="header-btn primary" onClick={() => navigate('/services')}>
-              🔍 Find Services
-            </button>
-            <button className="header-btn secondary" onClick={handleServiceClick}>
-              💼 Grow Your Business
-            </button>
-          </div>
+          <h1>Discover Local Treasures</h1>
+          <p>Find the best shops, restaurants, and services in your neighborhood</p>
+          <button className="explore-btn" onClick={() => {
+            document.querySelector('.categories').scrollIntoView({ behavior: 'smooth' });
+          }}>
+            Explore Now
+          </button>
         </div>
       </div>
 
-      <div className="search-bar">
-        <i className="search-icon">🔍</i>
+      {/* Enhanced Search Bar */}
+      <div style={{ 
+        padding: '40px 20px', 
+        textAlign: 'center', 
+        background: 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(10px)'
+      }}>
         <input
           type="text"
+          placeholder="🔍 Search for shops, restaurants, services..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search for shops, restaurants, services..."
-          className="search-input"
+          style={{
+            width: '100%',
+            maxWidth: '600px',
+            padding: '15px 20px',
+            fontSize: '16px',
+            border: 'none',
+            borderRadius: '25px',
+            outline: 'none',
+            background: 'rgba(255, 255, 255, 0.9)',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+          }}
         />
       </div>
 
-      {/* Categories */}
+      {/* Enhanced Categories Section */}
       <h2 className="section-title">🏷️ Shop by Category</h2>
       <div className="categories">
         {categories.map((cat) => (
@@ -251,36 +207,88 @@ const LandingPage = () => {
             <img src={cat.img} alt={cat.name} />
             <h4>{cat.name}</h4>
             <p>{cat.count} Shops Available</p>
-            <button className="explore-btn" style={{ background: cat.gradient }} onClick={() => handleCategoryClick(cat.name)}>Explore {cat.name}s</button>
+            <button
+              className="explore-btn"
+              onClick={() => handleCategoryClick(cat.name)}
+              style={{ background: cat.gradient }}
+            >
+              Explore {cat.name}s
+            </button>
+            {cat.name === 'Property' && (
+        <button
+          className="explore-btn"
+          onClick={() => navigate('/login', { state: { mode: 'owner' } })}
+          style={{
+            background: 'linear-gradient(45deg, #6a11cb, #2575fc)',
+            marginTop: '10px'
+          }}
+        >
+          Login as Owner
+        </button>
+      )}
           </div>
         ))}
       </div>
 
-      {/* Shops and Featured */}
+      {/* Enhanced Shops Section */}
       <div className="sections-container">
         <div className="shops-box">
-          <h3 className="shops-heading">🏪 {searchTerm ? 'Search Results' : 'Popular Shops in CP1'}</h3>
+          <h3 className="shops-heading">
+            🏪 {searchTerm ? 'Search Results' : 'Popular Shops in CP1'}
+          </h3>
+          
           {filteredShops.length === 0 ? (
-            <div className="no-shops-message">
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '40px 20px',
+              color: '#7f8c8d'
+            }}>
               <p>No shops found matching your search.</p>
             </div>
           ) : (
             filteredShops.map((shop) => (
-              <div className="shop-card" key={shop.id} onClick={() => handleShopClick(shop)} role="button" tabIndex={0}>
+              <div 
+                className="shop-card" 
+                key={shop.id}
+                onClick={() => handleShopClick(shop)}
+                style={{ cursor: 'pointer' }}
+              >
                 <img src={shop.img} alt={shop.name} />
                 <div className="shop-info">
                   <h4>{shop.name}</h4>
                   <div className="stars">{shop.rating}</div>
                   <div className="desc">{shop.desc}</div>
-                  <div className={`status ${shop.isOpen ? 'open' : 'closed'}`}>
+                  <div style={{ 
+                    fontSize: '12px', 
+                    color: shop.isOpen ? '#27ae60' : '#e74c3c',
+                    fontWeight: 'bold',
+                    marginTop: '5px'
+                  }}>
                     {shop.isOpen ? '🟢 Open' : '🔴 Closed'}
                   </div>
                 </div>
-                <div className="shop-actions">
-                  <button className="view-button" onClick={(e) => { e.stopPropagation(); handleShopClick(shop); }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <button 
+                    className="view-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleShopClick(shop);
+                    }}
+                  >
                     View Details
                   </button>
-                  <button className="call-btn" onClick={(e) => { e.stopPropagation(); handleCallShop(shop.phone); }}>
+                  <button 
+                    className="call-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCallShop(shop.phone);
+                    }}
+                    style={{ 
+                      fontSize: '10px', 
+                      padding: '6px 12px',
+                      background: 'linear-gradient(45deg, #27ae60, #2ecc71)'
+                    }}
+                  >
                     📞 Call
                   </button>
                 </div>
@@ -289,23 +297,43 @@ const LandingPage = () => {
           )}
         </div>
 
+        {/* Enhanced Featured Shop */}
         <div className="shopkeeper-box">
           <h3>🌟 Featured: Coders! Cafe</h3>
-          <div className="featured-info">
+          <div style={{ 
+            background: 'rgba(255, 255, 255, 0.5)', 
+            padding: '20px', 
+            borderRadius: '15px',
+            marginBottom: '20px'
+          }}>
             <p>🕙 <strong>Hours:</strong> 10:00 AM - 11:00 PM</p>
             <p>🏢 <strong>Location:</strong> Tower A Shop 3</p>
             <p>📞 <strong>Phone:</strong> 1284567860</p>
             <p>⭐ <strong>Rating:</strong> 4.7/5 (320 reviews)</p>
           </div>
-
-          <div className="featured-buttons">
-            <button className="call-btn" onClick={() => handleCallShop('1284567860')}>📞 Call Now</button>
-            <button className="view-button" onClick={() => navigate('/shop/featured-cafe')}>View Menu</button>
+          
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <button 
+              className="call-btn"
+              onClick={() => handleCallShop('1284567860')}
+            >
+              📞 Call Now
+            </button>
+            <button 
+              className="view-button"
+              onClick={() => navigate('/shop/coders-cafe')}
+            >
+              View Menu
+            </button>
           </div>
 
           <div className="menu">
             <h4>🍽️ Popular Items</h4>
-            <div className="menu-items">
+            <div style={{ 
+              background: 'rgba(255, 255, 255, 0.3)', 
+              padding: '15px', 
+              borderRadius: '10px' 
+            }}>
               <p>🥖 Bruschetta — ₹150</p>
               <p>☕ Cappuccino — ₹120</p>
               <p>🍰 Chocolate Cake — ₹180</p>
@@ -315,20 +343,36 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Features Section */}
-      <div className="features-section">
+      {/* New Features Section */}
+      <div style={{ 
+        padding: '60px 20px',
+        background: 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(10px)'
+      }}>
         <h2 className="section-title">🚀 Why Choose Kart Hood?</h2>
-        <div className="features-grid">
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '30px',
+          maxWidth: '1000px',
+          margin: '0 auto'
+        }}>
           {[
             { icon: '🔍', title: 'Easy Discovery', desc: 'Find local businesses with smart search' },
             { icon: '⭐', title: 'Verified Reviews', desc: 'Read authentic customer experiences' },
             { icon: '📱', title: 'Quick Contact', desc: 'Call or visit shops directly from the app' },
             { icon: '🕒', title: 'Live Updates', desc: 'Real-time open/closed status' }
           ].map((feature, index) => (
-            <div className="feature-card" key={index}>
-              <div className="feature-icon">{feature.icon}</div>
-              <h4>{feature.title}</h4>
-              <p>{feature.desc}</p>
+            <div key={index} style={{
+              background: 'rgba(255, 255, 255, 0.9)',
+              padding: '30px 20px',
+              borderRadius: '15px',
+              textAlign: 'center',
+              boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)'
+            }}>
+              <div style={{ fontSize: '3rem', marginBottom: '15px' }}>{feature.icon}</div>
+              <h4 style={{ color: '#2c3e50', marginBottom: '10px' }}>{feature.title}</h4>
+              <p style={{ color: '#7f8c8d', fontSize: '14px' }}>{feature.desc}</p>
             </div>
           ))}
         </div>
