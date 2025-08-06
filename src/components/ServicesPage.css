@@ -1,0 +1,271 @@
+/* ──────────────────────────────────────────────────────────────
+   ServicesPage.css  ▸  Kart Hood
+   This file extends the global palette & resets that already
+   exist in LandingPage.css. Only component-specific rules for
+   the Services page are declared here.
+──────────────────────────────────────────────────────────────── */
+
+/* ── PAGE WRAPPER ───────────────────────────────────────────── */
+.services-wrapper {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+  min-height: 100vh;
+  background: var(--gradient-primary);
+}
+
+.services-wrapper.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── HERO ───────────────────────────────────────────────────── */
+.services-hero {
+  text-align: center;
+  padding: 80px 20px 60px;
+  background: var(--gradient-primary);
+  color: var(--text-light);
+  border-bottom: 1px solid rgba(249, 115, 22, 0.2);
+}
+
+.services-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--accent-light) 0%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+/* Fallback for browsers without background-clip support */
+@supports not (-webkit-background-clip: text) {
+  .services-title {
+    color: var(--text-light);
+    -webkit-text-fill-color: unset;
+  }
+}
+
+.services-sub {
+  font-size: 1.25rem;
+  color: var(--neutral-200);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+  opacity: 0.95;
+}
+
+/* ── GRID ───────────────────────────────────────────────────── */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 40px;
+  padding: 60px 20px 100px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: var(--gradient-primary);
+}
+
+.service-card {
+  position: relative;
+  background: linear-gradient(145deg, var(--neutral-50), var(--neutral-100));
+  border-radius: 20px;
+  padding: 40px 30px 50px;
+  text-align: center;
+  box-shadow: var(--shadow-xl);
+  cursor: pointer;
+  border: 1px solid rgba(249, 115, 22, 0.1);
+  transition:
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideInUp 0.6s ease both;
+  overflow: hidden;
+}
+
+.service-card:hover,
+.service-card.hovered {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.15);
+  border-color: rgba(249, 115, 22, 0.4);
+}
+
+/* shimmer swipe */
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(249, 115, 22, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.service-card:hover::before {
+  left: 100%;
+}
+
+/* accent top bar */
+.service-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-accent);
+  transform: scaleX(0);
+  transition: transform 0.35s ease;
+}
+
+.service-card:hover::after,
+.service-card.hovered::after {
+  transform: scaleX(1);
+}
+
+/* ── CARD CONTENT ───────────────────────────────────────────── */
+.service-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--gradient-accent);
+  color: var(--text-light);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.service-icon {
+  font-size: 3rem;
+  margin-bottom: 25px;
+  user-select: none;
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover .service-icon {
+  transform: scale(1.1);
+}
+
+.service-card h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 15px;
+}
+
+.service-card p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  min-height: 60px;
+  line-height: 1.5;
+}
+
+/* ── CTA BUTTON ─────────────────────────────────────────────── */
+.service-btn-services {
+  position: absolute;
+  left: 50%;
+  bottom: -20px;
+  transform: translateX(-50%);
+  background: var(--gradient-accent);
+  color: var(--text-light);
+  border: none;
+  padding: 12px 32px;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.service-btn:hover {
+  transform: translate(-50%, -3px);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ── FOOTER (re-uses landing page feature styles) ───────────── */
+.footer-section {
+  margin-top: 0;
+  background: var(--gradient-primary);
+  border-top: 1px solid rgba(249, 115, 22, 0.2);
+}
+
+.footer-section .section-title {
+  color: var(--text-light);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* ── ANIMATIONS ─────────────────────────────────────────────── */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .services-hero {
+    padding: 60px 20px 40px;
+  }
+
+  .services-title {
+    font-size: 2.6rem;
+  }
+
+  .services-sub {
+    font-size: 1.1rem;
+    padding: 0 10px;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 40px 15px 80px;
+  }
+
+  .service-card {
+    padding: 35px 25px 45px;
+  }
+
+  .service-btn {
+    bottom: -18px;
+    padding: 10px 28px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .services-title {
+    font-size: 2.2rem;
+  }
+
+  .services-sub {
+    font-size: 1rem;
+  }
+
+  .service-card {
+    padding: 30px 20px 40px;
+  }
+
+  .service-card h3 {
+    font-size: 1.4rem;
+  }
+
+  .service-btn {
+    bottom: -15px;
+  }
+}

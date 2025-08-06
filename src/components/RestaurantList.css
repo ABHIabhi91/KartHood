@@ -455,7 +455,285 @@
     max-width: 400px;
   }
 }
+.restaurant-page {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
 
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.logo .gls { font-weight: 900; color: #d9534f; }
+.logo .aravali { font-weight: 300; color: #555; }
+.logo .homes { font-weight: 500; color: #5cb85c; }
+
+.breadcrumb {
+    padding: 1rem 0;
+    color: #777;
+    font-size: 0.9rem;
+}
+.breadcrumb a { text-decoration: none; color: #007bff; }
+.breadcrumb a:hover { text-decoration: underline; }
+
+.restaurant-heading {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+/* --- Refined Filter Box Styles (Version 2) --- */
+
+/* Main container for the filter box */
+.filters-container {
+    background-color: #ffffff;
+    border-radius: 16px; /* Softer radius */
+    margin-bottom: 2.5rem;
+    padding: 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06); /* Deeper shadow */
+    border: 1px solid #e9ecef;
+    overflow: hidden; /* Ensures child elements conform to border radius */
+}
+
+/* Header section of the filter box */
+.filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.75rem;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.filters-header h4 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600; /* Bolder */
+    color: #212529;
+}
+
+/* Body section containing the actual filter controls */
+.filters-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 1.75rem;
+    padding: 1.75rem;
+}
+
+/* Styling for each individual filter group (label + input) */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Increased gap */
+}
+
+.filter-group label {
+    font-weight: 600; /* Bolder labels */
+    font-size: 0.9rem;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Space between icon and text */
+}
+
+/* Custom styling for dropdowns (select elements) */
+.filter-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 0.8rem 2.5rem 0.8rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    font-size: 1rem;
+    background-color: #fff; /* White background for inputs */
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-group select:hover {
+    border-color: #adb5bd;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+}
+
+/* Styling for the price range slider group */
+.price-filter {
+    grid-column: 1 / -1; /* Make price filter span both columns */
+}
+
+/* Custom styling for the range slider track with fill */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    outline: none;
+    padding: 0;
+    margin-top: 0.5rem;
+    /* The magic for the fill color */
+    background: linear-gradient(to right, #007bff 0%, #007bff var(--slider-percentage, 100%), #e9ecef var(--slider-percentage, 100%), #e9ecef 100%);
+}
+
+/* Custom styling for the range slider thumb */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #007bff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    margin-top: -7px;
+    transition: transform 0.2s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #007bff;
+}
+
+/* Refined style for the 'Clear All' button */
+.clear-filters-btn {
+    background-color: #e9ecef;
+    color: #495057;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.clear-filters-btn:hover {
+    background-color: #dee2e6;
+    color: #212529;
+}
+
+/* --- Property Card Styles --- */
+.restaurant-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.restaurant-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.restaurant-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.image-container {
+    width: 100%;
+    height: 200px;
+}
+
+.restaurant-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.restaurant-info {
+    padding: 1.5rem;
+}
+
+.restaurant-info h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.rating {
+    margin-bottom: 0.75rem;
+    color: #6c757d;
+}
+
+.status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-top: 1rem;
+}
+
+.status.available {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status.sold {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.property-details, .property-price {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.property-price {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #007bff;
+}
+
+.no-results-message {
+    text-align: center;
+    padding: 3rem;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 8px;
+    grid-column: 1 / -1;
+}
+
+.no-results-message h3 {
+    margin-bottom: 0.5rem;
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .filters-body {
+        grid-template-columns: 1fr; /* Stack filters on smaller screens */
+    }
+    .price-filter {
+        grid-column: 1 / -1; /* Ensure it still spans full width */
+    }
+}
 @media (max-width: 480px) {
   .restaurant-heading {
     font-size: 2rem;
@@ -481,4 +759,93 @@
     padding: 8px 16px;
     font-size: 14px;
   }
+}
+.filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border: 1px solid #e9ecef;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 150px;
+}
+
+.filter-group label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    font-size: 1rem;
+    background-color: #fff;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.price-filter {
+    flex-grow: 1;
+    min-width: 250px;
+}
+
+.price-filter input[type="range"] {
+    padding: 0;
+    cursor: pointer;
+}
+
+.clear-filters-btn {
+    align-self: flex-end;
+    padding: 0.7rem 1.5rem;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.clear-filters-btn:hover {
+    background-color: #c82333;
+}
+
+.property-details, .property-price {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.property-price {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #007bff;
+}
+
+.no-results-message {
+    text-align: center;
+    padding: 3rem;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+.no-results-message h3 {
+    margin-bottom: 0.5rem;
 }
