@@ -14,7 +14,7 @@ import RegisterResident       from "./components/RegisterResident";
 import RegisterService        from "./components/RegisterService";
 import UserDashboard          from "./components/UserDashboard";
 import { AuthProvider }       from "./context/AuthContext";
-
+import ServicesPage from "./components/ServicesPage";
 // Helper that blocks guests and sends them to /login
 function PrivateRoute({ children }) {
   const token = localStorage.getItem("token");
@@ -35,7 +35,7 @@ export default function App() {
         <Route path="/services/bakeries"     element={<BakeryList />} />
         <Route path="/services/beauty-parlours" element={<BeautyParlourList />} />
         <Route path="/services/properties"   element={<PropertyList />} />
-
+        <Route path="/services"              element={<ServicesPage />} />
         {/* NEW: Protected property details route */}
         <Route
           path="/property/:propertyId"

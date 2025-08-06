@@ -222,9 +222,7 @@ const LandingPage = () => {
           <h1>Your Community. Your Services. One Hub</h1>
           <p>Find local services, connect with your neighbours</p>
           <div className="header-actions">
-            <button className="header-btn primary" onClick={() => {
-              document.querySelector('.categories').scrollIntoView({ behavior: 'smooth' });
-            }}>
+            <button className="header-btn primary" onClick={() => navigate('/services')}>
               🔍 Find Services
             </button>
             <button className="header-btn secondary" onClick={handleServiceClick}>
