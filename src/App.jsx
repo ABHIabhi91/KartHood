@@ -1,7 +1,7 @@
 // App.jsx - FIXED VERSION
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";  // Remove BrowserRouter import
-import LandingPagePage        from "./pages/LandingPagePage";
+import LandingPage from "./components/LandingPage";
 import ShopDetailsPage        from "./pages/ShopDetailsPage";
 import RestaurantList         from "./components/RestaurantList";
 import SalonList              from "./components/Salons";
@@ -14,8 +14,10 @@ import RegisterResident       from "./components/RegisterResident";
 import RegisterService        from "./components/RegisterService";
 import UserDashboard          from "./components/UserDashboard";
 import { AuthProvider }       from "./context/AuthContext";
-import ServicesPage from "./components/ServicesPage";
+import ServicesPage           from "./components/ServicesPage";
 // Helper that blocks guests and sends them to /login
+import PropertySellerDashboard from "./components/ServiceDashboard";
+import AddProperty from "./components/AddProperty";
 function PrivateRoute({ children }) {
   const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/login" replace />;
@@ -26,7 +28,7 @@ export default function App() {
     <AuthProvider>
       {/* NO <BrowserRouter> here - it's already in index.js */}
       <Routes>
-        <Route path="/" element={<LandingPagePage />} />
+        <Route path="/" element={<LandingPage />} />
 
         {/* Services */}
         <Route path="/services/restaurants"  element={<RestaurantList />} />
@@ -51,6 +53,9 @@ export default function App() {
         <Route path="/register-service"  element={<RegisterService />} />
         <Route path="/login"             element={<LoginPage />} />
         <Route path="/resident/dashboard"    element={<UserDashboard />} />
+        <Route path="/service/dashboard"     element={<PropertySellerDashboard />} />
+        <Route path="/service/add-property"  element={<AddProperty />} />
+        {/* Catch-all route */}
       </Routes>
     </AuthProvider>
   );

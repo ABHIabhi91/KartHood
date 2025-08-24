@@ -6,115 +6,277 @@ const UserDashboard = () => {
     const navigate = useNavigate();
     const location = useLocation();
     
-    // The user object is passed from the LandingPage during redirection
-    const user = location.state?.user;
+    const user = location.state?.user ||
+                JSON.parse(localStorage.getItem('user') || 'null');
+    const userType = localStorage.getItem('userType');
 
-    // MODIFICATION START: Moved the redirect logic inside the hook
-    // This hook will run when the component mounts or when user/navigate changes.
     React.useEffect(() => {
-        // If a user tries to access this page directly without being logged in,
-        // redirect them to the login page.
-        if (!user) {
-            console.log("No user found, redirecting to login.");
-            navigate('/login');
-        }
-    }, [user, navigate]); // Dependencies for the effect
-    // MODIFICATION END
+        if (!user || userType !== 'Resident') navigate('/login');
+    }, [user, userType, navigate]);
 
-    // This early return prevents rendering the rest of the component if there's no user.
-    // It's safe to do this after all hooks have been called.
-    if (!user) {
-        return (
-            <div className="loading-redirect">
-                <p>Please log in to view your dashboard. Redirecting...</p>
-            </div>
-        );
-    }
+    if (!user) return <div className="usd-loading">Loading...</div>;
 
     const handleLogout = () => {
-        // Clear user data from storage
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        // Navigate back to the login page
+        localStorage.removeItem('userType');
         navigate('/');
     };
 
-    // Mock data for recent orders and announcements
-    const recentBookings = [
-        { id: 1, text: 'Salon appointment - Tomorrow 3PM', status: 'Upcoming' },
-        { id: 2, text: 'Food order from Food Fiesta - Delivered', status: 'Delivered' },
-        { id: 3, text: 'Bakery order from Sweet Crumbs - Canceled', status: 'Canceled' },
+    // Dashboard stats cards
+    const dashboardStats = [
+        {
+            title: 'Active Orders',
+            value: '3',
+            subtitle: 'In progress',
+            icon: '📦',
+            color: 'usd-blue'
+        },
+        {
+            title: 'This Month',
+            value: '₹12,450',
+            subtitle: 'Total spent',
+            icon: '💳',
+            color: 'usd-green'
+        },
+        {
+            title: 'Saved',
+            value: '₹2,180',
+            subtitle: 'With offers',
+            icon: '💰',
+            color: 'usd-orange'
+        },
+        {
+            title: 'Rating',
+            value: '4.9',
+            subtitle: 'Your rating',
+            icon: '⭐',
+            color: 'usd-purple'
+        }
     ];
 
+    // Quick service shortcuts
+    const quickServices = [
+        {
+            name: 'Find Property',
+            icon: '🏠',
+            color: 'usd-blue',
+            onClick: () => navigate('/resident/properties')
+        },
+        {
+            name: 'Order Food',
+            icon: '🍕',
+            color: 'usd-green',
+            onClick: () => navigate('/resident/food')
+        },
+        {
+            name: 'Bakery',
+            icon: '🥖',
+            color: 'usd-orange',
+            onClick: () => navigate('/resident/bakery')
+        },
+        {
+            name: 'Salon',
+            icon: '✂️',
+            color: 'usd-purple',
+            onClick: () => navigate('/resident/salon')
+        }
+    ];
+
+    // Recent orders/bookings
+    const recentOrders = [
+        {
+            id: 1,
+            service: 'Salon appointment',
+            status: 'Tomorrow 3PM',
+            type: 'upcoming',
+            icon: '✂️',
+            color: 'usd-purple'
+        },
+        {
+            id: 2,
+            service: 'Food order',
+            status: 'Delivered',
+            type: 'delivered',
+            icon: '🍕',
+            color: 'usd-green'
+        },
+        {
+            id: 3,
+            service: 'Bakery order',
+            status: 'Ready for pickup',
+            type: 'ready',
+            icon: '🥖',
+            color: 'usd-orange'
+        }
+    ];
+
+    // Announcements
     const communityAnnouncements = [
-        { id: 1, text: 'Monthly society maintenance is due on the 10th.' },
-        { id: 2, text: 'A new Italian restaurant, "Pasta Paradise," has opened in Tower B.' },
-        { id: 3, text: 'The swimming pool will be closed for cleaning this weekend.' },
+        {
+            id: 1,
+            title: 'Monthly maintenance due',
+            description: 'Please pay your maintenance fees by the 30th of this month',
+            time: '2 hours ago',
+            icon: '💰'
+        },
+        {
+            id: 2,
+            title: 'New restaurant opened in Tower B',
+            description: 'A new South Indian restaurant has opened on the ground floor',
+            time: '1 day ago',
+            icon: '🍽️'
+        },
+        {
+            id: 3,
+            title: 'Society meeting scheduled',
+            description: 'Monthly society meeting on Sunday at 10 AM in the clubhouse',
+            time: '2 days ago',
+            icon: '🏢'
+        }
     ];
 
     return (
-        <div className="dashboard-container">
-            {/* Header Section */}
-            <header className="dashboard-header">
-                <div className="welcome-message">
-                    <h2>Welcome, {user.name}!</h2>
-                    <p>Tower: {user.tower}, Flat: {user.flatNumber}</p>
-                </div>
-                <button onClick={handleLogout} className="logout-button">Logout</button>
-            </header>
-
-            {/* Quick Services Section */}
-            <section className="dashboard-section">
-                <h3>Quick Services</h3>
-                <div className="quick-services-grid">
-                    <div className="service-card" onClick={() => navigate('/services/properties')}>
-                        <span className="service-icon">🏠</span>
-                        <p>Find Property</p>
+    <div className="usd-dashboard-wrapper">
+        {/* Sidebar Navigation */}
+        <aside className="usd-sidebar">
+            <nav className="usd-sidebar-nav">
+                <div className="usd-sidebar-group">
+                    <div className="usd-sidebar-link usd-active">
+                        <span className="usd-sidebar-icon">📊</span>
+                        <span>Dashboard</span>
                     </div>
-                    <div className="service-card" onClick={() => navigate('/services/restaurants')}>
-                        <span className="service-icon">🍔</span>
-                        <p>Order Food</p>
+                    <div className="usd-sidebar-link" onClick={() => navigate('/resident/properties')}>
+                        <span className="usd-sidebar-icon">🏠</span>
+                        <span>Properties</span>
                     </div>
-                    <div className="service-card" onClick={() => navigate('/services/bakeries')}>
-                        <span className="service-icon">🍰</span>
-                        <p>Bakery</p>
+                    <div className="usd-sidebar-link" onClick={() => navigate('/resident/services')}>
+                        <span className="usd-sidebar-icon">🛎️</span>
+                        <span>Services</span>
                     </div>
-                    <div className="service-card" onClick={() => navigate('/services/salons')}>
-                        <span className="service-icon">✂️</span>
-                        <p>Salon</p>
+                    <div className="usd-sidebar-link" onClick={() => navigate('/resident/orders')}>
+                        <span className="usd-sidebar-icon">📦</span>
+                        <span>Orders</span>
+                    </div>
+                    <div className="usd-sidebar-link" onClick={() => navigate('/resident/profile')}>
+                        <span className="usd-sidebar-icon">👤</span>
+                        <span>Profile</span>
                     </div>
                 </div>
+                <div className="usd-sidebar-group">
+                    <div className="usd-sidebar-link">
+                        <span className="usd-sidebar-icon">⚙️</span>
+                        <span>Settings</span>
+                    </div>
+                    <div className="usd-sidebar-link">
+                        <span className="usd-sidebar-icon">📞</span>
+                        <span>Support</span>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        {/* Top Bar */}
+        <header className="usd-header">
+            <div className="usd-header-content">
+                <div className="usd-header-left">
+                    <div className="usd-logo">🏠</div>
+                    <div className="usd-header-title">
+                        <h1>Kart Hood</h1>
+                        <span>Resident Portal</span>
+                    </div>
+                </div>
+                <nav className="usd-header-nav">
+                    <div className="usd-header-btn usd-active">Dashboard</div>
+                    <div className="usd-header-btn" onClick={() => navigate('/resident/properties')}>Properties</div>
+                    <div className="usd-header-btn" onClick={() => navigate('/resident/services')}>Services</div>
+                    <div className="usd-header-btn" onClick={() => navigate('/resident/orders')}>Orders</div>
+                    <div className="usd-header-btn" onClick={() => navigate('/resident/profile')}>Profile</div>
+                </nav>
+                <button className="usd-logout-btn" onClick={handleLogout}>Logout</button>
+            </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="usd-main-content">
+            {/* Welcome Banner and Actions */}
+            <section className="usd-welcome-section">
+                <div>
+                    <h2>Welcome back, {user.name}! 👋</h2>
+                    <p>Discover services, connect with neighbors, and manage your society life effortlessly.</p>
+                </div>
+                <div className="usd-welcome-actions">
+                    <button onClick={() => navigate('/resident/services')} className="usd-action-btn usd-action-primary">🛎️ Explore Services</button>
+                    <button onClick={() => navigate('/properties')} className="usd-action-btn usd-action-secondary">🏠 Find Property</button>
+                </div>
             </section>
 
-            {/* Recent Orders/Bookings Section */}
-            <section className="dashboard-section">
-                <h3>Recent Orders & Bookings</h3>
-                <ul className="info-list">
-                    {recentBookings.map(item => (
-                        <li key={item.id} className={`list-item item-${item.status.toLowerCase()}`}>
-                            <span>{item.text}</span>
-                            <span className="item-status">{item.status}</span>
-                        </li>
+            {/* Stats Overview */}
+            <section className="usd-stats-row">
+                {dashboardStats.map((stat, idx) => (
+                    <div key={idx} className={`usd-stat-card ${stat.color}`}>
+                        <div className="usd-stat-icon">{stat.icon}</div>
+                        <div>
+                            <div className="usd-stat-value">{stat.value}</div>
+                            <div className="usd-stat-title">{stat.title}</div>
+                            <div className="usd-stat-subtitle">{stat.subtitle}</div>
+                        </div>
+                    </div>
+                ))}
+            </section>
+
+            {/* Quick Services */}
+            <section className="usd-services-strip">
+                {quickServices.map((srv, idx) =>
+                    <div key={idx} className={`usd-service-card ${srv.color}`} onClick={srv.onClick}>
+                        <div className="usd-service-icon">{srv.icon}</div>
+                        <div className="usd-service-label">{srv.name}</div>
+                        <div className="usd-service-arrow">→</div>
+                    </div>
+                )}
+            </section>
+
+            {/* Orders & Announcements */}
+            <div className="usd-cards-grid">
+                {/* Orders */}
+                <section className="usd-card">
+                    <div className="usd-card-title-row">
+                        <h3>Recent Orders & Bookings</h3>
+                        <button className="usd-view-all-btn" onClick={() => navigate('/resident/orders')}>View All</button>
+                    </div>
+                    {recentOrders.map((order) => (
+                        <div key={order.id} className="usd-order-row">
+                            <div className={`usd-order-icon ${order.color}`}>{order.icon}</div>
+                            <div>
+                                <div className="usd-order-title">{order.service}</div>
+                                <div className="usd-order-status">{order.status}</div>
+                            </div>
+                            <div>
+                                <button className="usd-order-btn">View</button>
+                            </div>
+                        </div>
                     ))}
-                </ul>
-            </section>
-
-            {/* Community Announcements Section */}
-            <section className="dashboard-section">
-                <h3>Community Announcements</h3>
-                <ul className="info-list">
-                    {communityAnnouncements.map(item => (
-                        <li key={item.id} className="list-item">
-                            {item.text}
-                        </li>
+                </section>
+                {/* Announcements */}
+                <section className="usd-card">
+                    <div className="usd-card-title-row">
+                        <h3>Community Announcements</h3>
+                        <button className="usd-view-all-btn" onClick={() => navigate('/resident/announcements')}>View All</button>
+                    </div>
+                    {communityAnnouncements.map((ann) => (
+                        <div key={ann.id} className="usd-ann-row">
+                            <div className="usd-ann-icon">{ann.icon}</div>
+                            <div>
+                                <div className="usd-ann-title">{ann.title}</div>
+                                <div className="usd-ann-desc">{ann.description}</div>
+                                <div className="usd-ann-ts">{ann.time}</div>
+                            </div>
+                        </div>
                     ))}
-                </ul>
-            </section>
-
-            <footer className="dashboard-footer">
-                <p>Kart Hood - Your Community Hub</p>
-            </footer>
-        </div>
+                </section>
+            </div>
+        </main>
+    </div>
     );
 };
 

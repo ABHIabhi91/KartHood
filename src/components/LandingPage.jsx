@@ -23,6 +23,11 @@ const LandingPage = () => {
           // Redirect to the user dashboard and pass user info in the state
           navigate('/resident/dashboard', { state: { user } });
         }
+        else if (user.role === 'SERVICE PROVIDER') {
+          console.log('User is a service provider, redirecting to service dashboard:', user.businessName);
+          // Redirect to the service dashboard and pass user info in the state
+          navigate('/service/dashboard', { state: { user } });
+        }
       } catch (error) {
         console.error('Error parsing user data:', error);
         // Clean up corrupted data from localStorage
@@ -199,7 +204,7 @@ const LandingPage = () => {
     <div>
       {/* Login Bar */}
       <div className="login-bar">
-        <h1>🏪 Kart Hood</h1>
+        <h1>Kart Hood</h1>
         <div>
           {userIsLoggedIn && displayUser ? (
             <div className="login-loggedin">
@@ -208,9 +213,9 @@ const LandingPage = () => {
             </div>
           ) : (
             <div className="login-buttons">
-              <button className="login-btn" onClick={handleLoginClick}>🔑 Login</button>
-              <button className="login-btn resident-btn" onClick={handleResidentClick}>🏠 Register as Resident</button>
-              <button className="login-btn service-btn" onClick={handleServiceClick}>💼 Join as Service</button>
+              <button className="login-btn" onClick={handleLoginClick}>Login</button>
+              <button className="login-btn resident-btn" onClick={handleResidentClick}>Register as Resident</button>
+              <button className="login-btn service-btn" onClick={handleServiceClick}>Join as Service</button>
             </div>
           )}
         </div>
@@ -219,7 +224,7 @@ const LandingPage = () => {
       {/* Header */}
       <div className="header-image">
         <div className="header-content">
-          <h1>Your Community. Your Services. One Hub</h1>
+          <h1>Our Community. Our Services. One Hub</h1>
           <p>Find local services, connect with your neighbours</p>
           <div className="header-actions">
             <button className="header-btn primary" onClick={() => navigate('/services')}>

@@ -16,7 +16,7 @@ const ServicesPage = () => {
       desc: 'Complete property management for owners & tenants.',
       icon: '🏢',
       to: '/services/properties',
-      stat: '500+ Listings'
+      stat: '50+ Listings'
     },
     {
       id: 'restaurants',
@@ -24,7 +24,7 @@ const ServicesPage = () => {
       desc: 'Menus, orders and analytics for food outlets.',
       icon: '🍽️',
       to: '/services/restaurants',
-      stat: '200+ Partners'
+      stat: '20+ Partners'
     },
     {
       id: 'bakeries',
@@ -32,7 +32,7 @@ const ServicesPage = () => {
       desc: 'Recipe scaling, order queues & stock tracking.',
       icon: '🧁',
       to: '/services/bakeries',
-      stat: '150+ Bakeries'
+      stat: '15+ Bakeries'
     },
     {
       id: 'salons',
@@ -40,7 +40,7 @@ const ServicesPage = () => {
       desc: 'Bookings, staff rosters & client records in one place.',
       icon: '✂️',
       to: '/services/salons',
-      stat: '100+ Salons'
+      stat: '10+ Salons'
     }
   ];
 
@@ -82,15 +82,7 @@ const ServicesPage = () => {
             <h3>{srv.name}</h3>
             <p>{srv.desc}</p>
 
-            <button
-              className="service-btn-serivices"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(srv.to);
-              }}
-            >
-              Explore&nbsp;{srv.name}
-            </button>
+            
           </article>
         ))}
       </section>

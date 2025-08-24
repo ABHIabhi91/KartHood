@@ -56,10 +56,19 @@ const RegisterService = () => {
       navigate('/');
     } catch (err) {
       console.error('Registration error:', err);
-      if (err.response && err.response.data && err.response.data.message) {
+      
+      // Check multiple possible error message locations
+      if (err.response?.data?.message) {
         setLoginError(err.response.data.message);
+      } else if (err.response?.data?.error) {
+        setLoginError(err.response.data.error);
+      } else if (err.response?.data) {
+        // If the entire response.data is a string message
+        setLoginError(typeof err.response.data === 'string' ? err.response.data : JSON.stringify(err.response.data));
+      } else if (err.message) {
+        setLoginError(err.message);
       } else {
-        setLoginError('Something went wrong. Please try again.');
+        setLoginError('Registration failed. Please try again.');
       }
     } finally {
       setIsLoading(false);
@@ -67,112 +76,159 @@ const RegisterService = () => {
   };
 
   return (
-    <div className="login-page">
-      <div className="background-image" />
-      <div className="gradient-overlay" />
-      <div className="floating-element-1" />
-      <div className="floating-element-2" />
+    <div className="service-register-page">
+      {/* Back Button */}
+      <button
+        onClick={() => navigate('/')}
+        className="back-button"
+        aria-label="Back"
+      >
+        ←
+      </button>
 
-      <button onClick={() => navigate('/')} className="back-button">←</button>
-      <div className="login-container">
-        <div className="logo">🏪 Kart Hood</div>
-        <h2 className="welcome-text">Join as Service Provider</h2>
-        <p className="subtitle">Start your business journey with us!</p>
-
-        <form onSubmit={handleSubmit} className="login-form">
-          {loginError && <div className="error-message">{loginError}</div>}
-
-          <div className="signup-fields">
-            <label className="signup-label">Business Owner Name</label>
-            <input
-              type="text"
-              name="ownerName"
-              placeholder="👤 Owner Name"
-              value={formData.ownerName}
-              onChange={handleInputChange}
-              required
-              className="signup-input"
-            />
-
-            <label className="signup-label">Business Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="📧 Email"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-              className="signup-input"
-            />
-
-            <label className="signup-label">Password</label>
-            <div className="input-group">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                placeholder="🔒 Password"
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-                className="signup-input password-input"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="password-toggle"
-              >
-                {showPassword ? '🙈' : '👁️'}
-              </button>
+      {/* Split Container */}
+      <div className="split-container">
+        {/* Left Panel - Business Image & Branding */}
+        <div className="left-panel-service">
+          <div className="brand-content">
+            <div className="brand-text">
+              <h1 className="brand-title">🏪 Kart Hood</h1>
             </div>
-
-            <label className="signup-label">Business Phone</label>
-            <input
-              type="tel"
-              name="phone"
-              placeholder="📱 Phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              required
-              className="signup-input"
-            />
-
-            <label className="signup-label">Business Category</label>
-            <select
-              name="businessCategory"
-              value={formData.businessCategory}
-              onChange={handleInputChange}
-              required
-              className="signup-input"
-            >
-              {categoryOptions.map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
           </div>
+        </div>
 
-          <button type="submit" disabled={isLoading} className="submit-button">
-            {isLoading ? (
-              <>
-                <div className="loading-spinner" />
-                Creating Account...
-              </>
-            ) : (
-              '💼 Join as Service Provider'
-            )}
-          </button>
-        </form>
+        {/* Right Panel - Registration Form */}
+        <div className="right-panel">
+          <div className="service-register-container">
+            <h2 className="welcome-text">Join as Service Provider</h2>
+            <p className="subtitle">
+              Start your business journey with us! Already have an account? 
+              <button onClick={() => navigate('/login')} className="login-link">
+                Login here
+              </button>
+            </p>
 
-        <div className="auth-links">
-          <p>Already have an account?
-            <button onClick={() => navigate('/login')} className="link-button">
-              Login here
-            </button>
-          </p>
-          <p>Looking to buy/rent?
-            <button onClick={() => navigate('/register-resident')} className="link-button">
-              Register as Resident
-            </button>
-          </p>
+            <form onSubmit={handleSubmit} className="service-register-form">
+              {loginError && (
+                <div className="error-message" role="alert">
+                  {loginError}
+                </div>
+              )}
+
+              <div className="signup-fields">
+                <div className="field-group">
+                  <label className="signup-label">Business Owner Name</label>
+                  <input
+                    type="text"
+                    name="ownerName"
+                    placeholder="👤 Owner Name"
+                    value={formData.ownerName}
+                    onChange={handleInputChange}
+                    required
+                    className="signup-input"
+                    autoComplete="name"
+                  />
+                </div>
+
+                <div className="field-group">
+                  <label className="signup-label">Business Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="📧 Email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    className="signup-input"
+                    autoComplete="email"
+                  />
+                </div>
+
+                <div className="field-group">
+                  <label className="signup-label">Password</label>
+                  <div className="input-group">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      name="password"
+                      placeholder="🔒 Password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                      className="signup-input password-input"
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="password-toggle"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? '🙈' : '👁️'}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="field-group">
+                  <label className="signup-label">Business Phone</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    placeholder="📱 Phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    required
+                    className="signup-input"
+                    autoComplete="tel"
+                  />
+                </div>
+
+                <div className="field-group">
+                  <label className="signup-label">Business Category</label>
+                  <select
+                    name="businessCategory"
+                    value={formData.businessCategory}
+                    onChange={handleInputChange}
+                    required
+                    className="signup-input select-input"
+                  >
+                    {categoryOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="submit-button"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="loading-spinner" />
+                    Creating Account...
+                  </>
+                ) : (
+                  '💼 Join as Service Provider'
+                )}
+              </button>
+            </form>
+
+            {/* Auth Links */}
+            <div className="auth-links">
+              <p>Looking to buy/rent?</p>
+              <div className="register-options">
+                <button
+                  onClick={() => navigate('/register-resident')}
+                  className="register-button resident-register"
+                >
+                  🏠 Register as Resident
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
