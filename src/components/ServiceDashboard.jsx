@@ -170,21 +170,21 @@ const PropertySellerDashboard = () => {
                             <span className="psd-nav-icon">📊</span>
                             <span className="psd-nav-label">Dashboard</span>
                         </div>
-                        <div className="psd-nav-link" onClick={() => navigate('/service/properties')}>
+                        <div className="psd-nav-link" onClick={() => navigate('/services/properties')}>
                             <span className="psd-nav-icon">🏘️</span>
                             <span className="psd-nav-label">Properties</span>
                             <span className="psd-nav-count">24</span>
                         </div>
-                        <div className="psd-nav-link" onClick={() => navigate('/service/inquiries')}>
+                        <div className="psd-nav-link" onClick={() => navigate('/services/inquiries')}>
                             <span className="psd-nav-icon">💬</span>
                             <span className="psd-nav-label">Inquiries</span>
                             <span className="psd-nav-count">47</span>
                         </div>
-                        <div className="psd-nav-link" onClick={() => navigate('/service/analytics')}>
+                        <div className="psd-nav-link" onClick={() => navigate('/services/analytics')}>
                             <span className="psd-nav-icon">📈</span>
                             <span className="psd-nav-label">Analytics</span>
                         </div>
-                        <div className="psd-nav-link" onClick={() => navigate('/service/profile')}>
+                        <div className="psd-nav-link" onClick={() => navigate('/services/profile')}>
                             <span className="psd-nav-icon">👤</span>
                             <span className="psd-nav-label">Profile</span>
                         </div>

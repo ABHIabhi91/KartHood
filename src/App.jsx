@@ -17,7 +17,7 @@ import { AuthProvider }       from "./context/AuthContext";
 import ServicesPage           from "./components/ServicesPage";
 // Helper that blocks guests and sends them to /login
 import PropertySellerDashboard from "./components/ServiceDashboard";
-import AddProperty from "./components/AddProperty";
+import AddPropertyPage from "./components/AddProperty";
 function PrivateRoute({ children }) {
   const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/login" replace />;
@@ -54,7 +54,7 @@ export default function App() {
         <Route path="/login"             element={<LoginPage />} />
         <Route path="/resident/dashboard"    element={<UserDashboard />} />
         <Route path="/service/dashboard"     element={<PropertySellerDashboard />} />
-        <Route path="/service/add-property"  element={<AddProperty />} />
+        <Route path="/service/add-property"   element={<AddPropertyPage />} />
         {/* Catch-all route */}
       </Routes>
     </AuthProvider>
